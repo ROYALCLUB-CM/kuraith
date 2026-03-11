@@ -1,6 +1,6 @@
 # Oracle vs KURAITH — Full Comparison (March 2026)
 
-> อัพเดตล่าสุดหลัง KURAITH Phase 1-3 เสร็จ + Mission Control + 4 local tasks
+> อัพเดตล่าสุดหลัง Priority 1 เสร็จ — 17 agents, 15 skills, Mission Control
 
 ---
 
@@ -22,13 +22,13 @@
 
 | | **Oracle** | **KURAITH** |
 |---|-----------|------------|
-| **Agents รองรับ** | **17** — Claude, Codex, Cursor, Gemini, Amp, Roo, Windsurf, Zed, Goose, Kilo, Cline, Aider, Continue, OpenCode, Copilot, Antigravity, OpenClaw | **8** — Claude, Codex, Gemini, Zed, Cursor, Roo, Amp, Windsurf |
-| **Skills** | **30** (4 subagent + 10 code + 16 markdown) | **10** — recap, learn, rrr, forward, standup, trace, who-are-you, feel, philosophy, speak |
-| **Profiles** | 3 — seed (6), standard (13), full (30) | 3 — seed (5), standard (8), full (10) |
+| **Agents รองรับ** | **17** — Claude, Codex, Cursor, Gemini, Amp, Roo, Windsurf, Zed, Goose, Kilo, Cline, Aider, Continue, OpenCode, Copilot, Antigravity, OpenClaw | **17** — Claude, Codex, Gemini, Zed, Cursor, Roo, Amp, Windsurf, Goose, Kilo, Cline, Aider, Continue, OpenCode, Copilot, Antigravity, OpenClaw |
+| **Skills** | **30** (4 subagent + 10 code + 16 markdown) | **15** — recap, learn, rrr, forward, standup, trace, who-are-you, feel, philosophy, speak, awaken, dig, deep-research, watch, birth |
+| **Profiles** | 3 — seed (6), standard (13), full (30) | 3 — seed (7), standard (11), full (15) |
 | **Installer** | `curl \| bash` (pre-built binary, 37ms startup) | `bash install.sh` (shell script) |
 | **Auto-detect agents** | ✅ | ✅ |
 
-**วิเคราะห์**: Oracle นำด้าน agents (17 vs 8) และ skills (30 vs 10) แต่ KURAITH ครอบคลุม skills หลักทั้งหมดที่ Oracle มี
+**วิเคราะห์**: Agents เท่ากัน (17 vs 17). Oracle ยังนำด้าน skills (30 vs 15) แต่ KURAITH ครอบคลุม skills หลักทั้งหมดที่ใช้งานบ่อย
 
 ---
 
@@ -164,8 +164,8 @@
 
 | ด้าน | Oracle ชนะ | KURAITH ชนะ | เสมอ |
 |------|:---:|:---:|:---:|
-| Agents | ✅ 17 vs 8 | | |
-| Skills | ✅ 30 vs 10 | | |
+| Agents | | | ✅ 17 vs 17 |
+| Skills | ✅ 30 vs 15 | | |
 | Installer | ✅ Binary (37ms) | | |
 | Workspace isolation | ✅ Git worktree | | |
 | Community | ✅ 190 Oracles | | |
@@ -183,7 +183,7 @@
 | Pipeline | | | ✅ ทั้งคู่มี |
 | Local structure | | | ✅ ψ/ ≈ omega/ |
 | Philosophy | | | ✅ คล้ายกัน |
-| **รวม** | **5** | **11** | **3** |
+| **รวม** | **4** | **11** | **4** |
 
 > **Oracle** = เหนือกว่าด้าน **ecosystem** (agents, skills, community, maturity)
 > **KURAITH** = เหนือกว่าด้าน **infrastructure** (database, API, dashboard, testing, deployment)
@@ -194,13 +194,12 @@
 
 | # | Feature | รายละเอียด | ความยาก |
 |---|---------|-----------|---------|
-| 1 | 9 agents เพิ่มเติม | Goose, Kilo, Cline, Aider, Continue, OpenCode, Copilot, Antigravity, OpenClaw | ง่าย |
-| 2 | 20 skills เพิ่มเติม | deep-research, gemini, watch, awaken, birth, dig, etc. | ปานกลาง |
-| 3 | Binary installer | Pre-built binary (37ms startup) | ยาก |
-| 4 | Git worktree workspace | Agent แต่ละตัวได้ branch + working dir แยก | ปานกลาง |
-| 5 | Hermes routing | Auto-select agent ตาม context | ยาก |
-| 6 | Multi-instance | หลาย KURAITH เฉพาะทาง | ยาก |
-| 7 | LINE Bot integration | ส่งข้อความผ่าน LINE | ปานกลาง |
+| 1 | 15 skills เพิ่มเติม | gemini, about-oracle, birth-oracle, etc. (mostly Oracle-specific) | ปานกลาง |
+| 2 | Binary installer | Pre-built binary (37ms startup) | ยาก |
+| 3 | Git worktree workspace | Agent แต่ละตัวได้ branch + working dir แยก | ปานกลาง |
+| 4 | Hermes routing | Auto-select agent ตาม context | ยาก |
+| 5 | Multi-instance | หลาย KURAITH เฉพาะทาง | ยาก |
+| 6 | LINE Bot integration | ส่งข้อความผ่าน LINE | ปานกลาง |
 
 ## สิ่งที่ KURAITH มีแต่ Oracle ไม่มี
 
@@ -223,39 +222,11 @@
 
 ## Roadmap — ลำดับที่ควรทำ
 
-### Priority 1: ปิดช่องว่างด้าน Agents + Skills (ง่าย, impact สูง)
+### ~~Priority 1: ปิดช่องว่างด้าน Agents + Skills~~ ✅ DONE
 
-#### 1.1 เพิ่ม 9 Agents
-เพิ่มใน `src/agents.ts` + `skills/install.sh`:
-
-| Agent | detectPath | installDir |
-|-------|-----------|-----------|
-| Goose | `~/.goose/` | `~/.goose/commands/` |
-| Kilo Code | `~/.kilo/` | `~/.kilo/commands/` |
-| Cline | `~/.cline/` | `~/.cline/commands/` |
-| Aider | `~/.aider/` | `~/.aider/commands/` |
-| Continue | `~/.continue/` | `~/.continue/commands/` |
-| OpenCode | `~/.opencode/` | `~/.opencode/commands/` |
-| GitHub Copilot | `~/.config/github-copilot/` | `~/.config/github-copilot/commands/` |
-| Antigravity | `~/.antigravity/` | `~/.antigravity/commands/` |
-| OpenClaw | `~/.openclaw/` | `~/.openclaw/commands/` |
-
-**ระยะเวลา**: ~30 นาที
-**ผลลัพธ์**: KURAITH รองรับ 17 agents เท่า Oracle
-
-#### 1.2 เพิ่ม Skills ใหม่
-เพิ่มจาก Oracle ที่ยังไม่มี:
-
-| ลำดับ | Skill | ทำอะไร | ความยาก |
-|-------|-------|--------|---------|
-| 1 | `/deep-research` | ค้นหาเชิงลึกข้ามหลายแหล่ง | ปานกลาง |
-| 2 | `/watch` | ติดตามไฟล์/โปรเจค | ปานกลาง |
-| 3 | `/awaken` | เริ่มต้น session ใหม่ (check inbox + context) | ง่าย |
-| 4 | `/birth` | สร้าง Oracle/KURAITH instance ใหม่ | ปานกลาง |
-| 5 | `/dig` | ขุดลึกเข้าไปใน topic | ง่าย |
-
-**ระยะเวลา**: ~2-3 ชั่วโมง
-**ผลลัพธ์**: 15 skills (seed=7, standard=11, full=15)
+- ✅ เพิ่ม 9 agents → **17 agents** เท่า Oracle
+- ✅ เพิ่ม 5 skills ใหม่ (awaken, dig, deep-research, watch, birth) → **15 skills**
+- ✅ Profiles: seed=7, standard=11, full=15
 
 ### Priority 2: Deploy + Launch (ต้องมี server)
 
@@ -308,6 +279,9 @@ Auto-select agent ตาม context:
 | Phase 3.5: Mission Control | ✅ Done |
 | Local tasks (tests, vector, rate limit, backup) | ✅ Done |
 | Phase 4: Deploy | ⏳ Waiting (server + domain) |
-| Priority 1: +9 agents, +5 skills | 🔜 Next |
+| Priority 1: +9 agents, +5 skills | ✅ Done (17 agents, 15 skills) |
 | Priority 2: Deploy + Launch | 🔜 Next (need server) |
-| Priority 3-6: Advanced features | 📋 Planned |
+| Priority 3: Git worktree integration | 📋 Planned |
+| Priority 4: Hermes-style routing | 📋 Planned |
+| Priority 5: Multi-instance | 📋 Planned |
+| Priority 6: LINE Bot | 📋 Planned |
