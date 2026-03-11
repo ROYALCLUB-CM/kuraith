@@ -7,11 +7,13 @@ import {
   Workflow,
   Clock,
   Search,
+  Radio,
   LogOut,
 } from "lucide-react";
 
 const nav = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
+  { to: "/mission-control", icon: Radio, label: "Mission Control" },
   { to: "/documents", icon: FileText, label: "Documents" },
   { to: "/pipeline", icon: GitBranch, label: "Pipeline" },
   { to: "/workflows", icon: Workflow, label: "Workflows" },

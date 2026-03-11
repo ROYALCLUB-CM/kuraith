@@ -81,4 +81,7 @@ export const api = {
   // Workflows
   workflows: () => request<any>("/workflows"),
   workflow: (id: string) => request<any>(`/workflows/${id}`),
+
+  // Mission Control
+  missionControl: () => request<any>("/mission-control"),
 };

@@ -8,6 +8,7 @@ import PipelinePage from "./pages/Pipeline";
 import WorkflowsPage from "./pages/Workflows";
 import SessionsPage from "./pages/Sessions";
 import SearchPage from "./pages/Search";
+import MissionControlPage from "./pages/MissionControl";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   if (!getToken()) return <Navigate to="/login" replace />;
@@ -27,6 +28,7 @@ export default function App() {
         }
       >
         <Route index element={<DashboardPage />} />
+        <Route path="mission-control" element={<MissionControlPage />} />
         <Route path="documents" element={<DocumentsPage />} />
         <Route path="pipeline" element={<PipelinePage />} />
         <Route path="workflows" element={<WorkflowsPage />} />

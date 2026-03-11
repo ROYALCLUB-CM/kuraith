@@ -12,6 +12,7 @@ import { searchRoutes } from "./api/search.js";
 import { sessionRoutes } from "./api/sessions.js";
 import { dashboardRoutes } from "./api/dashboard.js";
 import { workflowRoutes } from "./api/workflows.js";
+import { missionControlRoutes } from "./api/mission-control.js";
 import { authMiddleware } from "./api/middleware.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -39,6 +40,7 @@ export async function createServer() {
   await app.register(sessionRoutes, { prefix: "/api/sessions" });
   await app.register(dashboardRoutes, { prefix: "/api/dashboard" });
   await app.register(workflowRoutes, { prefix: "/api/workflows" });
+  await app.register(missionControlRoutes, { prefix: "/api/mission-control" });
 
   // Health check
   app.get("/health", async () => ({
