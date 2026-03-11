@@ -2,15 +2,15 @@
   "profiles": {
     "seed": {
       "description": "Essential skills for basic memory workflow",
-      "skills": ["recap", "forward", "learn", "trace", "feel"]
+      "skills": ["recap", "forward", "learn", "trace", "feel", "awaken", "dig"]
     },
     "standard": {
       "description": "Recommended set for daily use",
-      "skills": ["recap", "forward", "learn", "trace", "feel", "rrr", "standup", "who-are-you"]
+      "skills": ["recap", "forward", "learn", "trace", "feel", "awaken", "dig", "rrr", "standup", "who-are-you", "watch"]
     },
     "full": {
       "description": "All available skills",
-      "skills": ["recap", "forward", "learn", "trace", "feel", "rrr", "standup", "who-are-you", "philosophy", "speak"]
+      "skills": ["recap", "forward", "learn", "trace", "feel", "awaken", "dig", "rrr", "standup", "who-are-you", "watch", "deep-research", "birth", "philosophy", "speak"]
     }
   }
 }

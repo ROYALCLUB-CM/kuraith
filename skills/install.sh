@@ -37,11 +37,13 @@ while [[ $# -gt 0 ]]; do
       echo "    --help                          Show this help"
       echo ""
       echo "  Profiles:"
-      echo "    seed      5 skills: recap, forward, learn, trace, feel"
-      echo "    standard  8 skills: seed + rrr, standup, who-are-you"
-      echo "    full     10 skills: standard + philosophy, speak"
+      echo "    seed       7 skills: recap, forward, learn, trace, feel, awaken, dig"
+      echo "    standard  11 skills: seed + rrr, standup, who-are-you, watch"
+      echo "    full      15 skills: standard + deep-research, birth, philosophy, speak"
       echo ""
-      echo "  Agents: claude, codex, gemini, zed, cursor, roo, amp, windsurf"
+      echo "  Agents (17): claude, codex, gemini, zed, cursor, roo, amp, windsurf,"
+      echo "               goose, kilo, cline, aider, continue, opencode, copilot,"
+      echo "               antigravity, openclaw"
       echo ""
       exit 0
       ;;
@@ -55,13 +57,13 @@ done
 # ─── Profile definitions ───
 case "$PROFILE" in
   seed)
-    SKILLS=(recap forward learn trace feel)
+    SKILLS=(recap forward learn trace feel awaken dig)
     ;;
   standard)
-    SKILLS=(recap forward learn trace feel rrr standup who-are-you)
+    SKILLS=(recap forward learn trace feel awaken dig rrr standup who-are-you watch)
     ;;
   full)
-    SKILLS=(recap forward learn trace feel rrr standup who-are-you philosophy speak)
+    SKILLS=(recap forward learn trace feel awaken dig rrr standup who-are-you watch deep-research birth philosophy speak)
     ;;
   *)
     echo "  Unknown profile: $PROFILE (use: seed, standard, full)"
@@ -80,6 +82,15 @@ AGENT_DEFS=(
   "roo|Roo Code|$HOME/.roo/|$HOME/.roo/commands/"
   "amp|Amp CLI|$HOME/.config/agents/|$HOME/.config/agents/skills/"
   "windsurf|Windsurf|$PWD/.windsurf/|$PWD/.windsurf/workflows/"
+  "goose|Goose|$HOME/.goose/|$HOME/.goose/commands/"
+  "kilo|Kilo Code|$HOME/.kilo/|$HOME/.kilo/commands/"
+  "cline|Cline|$HOME/.cline/|$HOME/.cline/commands/"
+  "aider|Aider|$HOME/.aider/|$HOME/.aider/commands/"
+  "continue|Continue|$HOME/.continue/|$HOME/.continue/commands/"
+  "opencode|OpenCode|$HOME/.opencode/|$HOME/.opencode/commands/"
+  "copilot|GitHub Copilot|$HOME/.config/github-copilot/|$HOME/.config/github-copilot/commands/"
+  "antigravity|Antigravity|$HOME/.antigravity/|$HOME/.antigravity/commands/"
+  "openclaw|OpenClaw|$HOME/.openclaw/|$HOME/.openclaw/commands/"
 )
 
 echo ""
@@ -133,7 +144,9 @@ done
 if [ "$agents_found" -eq 0 ]; then
   if [ -n "$TARGET_AGENT" ]; then
     echo "  Agent '$TARGET_AGENT' not recognized."
-    echo "  Available: claude, codex, gemini, zed, cursor, roo, amp, windsurf"
+    echo "  Available: claude, codex, gemini, zed, cursor, roo, amp, windsurf,"
+    echo "             goose, kilo, cline, aider, continue, opencode, copilot,"
+    echo "             antigravity, openclaw"
   else
     echo "  No agents detected on this machine."
     echo "  Use --agent <name> to force install for a specific agent."
