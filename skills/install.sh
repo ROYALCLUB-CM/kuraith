@@ -37,9 +37,9 @@ while [[ $# -gt 0 ]]; do
       echo "    --help                          Show this help"
       echo ""
       echo "  Profiles:"
-      echo "    seed       7 skills: recap, forward, learn, trace, feel, awaken, dig"
-      echo "    standard  11 skills: seed + rrr, standup, who-are-you, watch"
-      echo "    full      15 skills: standard + deep-research, birth, philosophy, speak"
+      echo "    seed       7 skills: recap, forward, learn, trace, feel, awaken, note"
+      echo "    standard  16 skills: seed + dig, rrr, standup, who-are-you, watch, focus, reflect, status, sync"
+      echo "    full      30 skills: standard + deep-research, birth, philosophy, speak, about, promote, export, timeline, connect, review, broadcast, plan, mission, goodbye"
       echo ""
       echo "  Agents (17): claude, codex, gemini, zed, cursor, roo, amp, windsurf,"
       echo "               goose, kilo, cline, aider, continue, opencode, copilot,"
@@ -57,13 +57,13 @@ done
 # ─── Profile definitions ───
 case "$PROFILE" in
   seed)
-    SKILLS=(recap forward learn trace feel awaken dig)
+    SKILLS=(recap forward learn trace feel awaken note)
     ;;
   standard)
-    SKILLS=(recap forward learn trace feel awaken dig rrr standup who-are-you watch)
+    SKILLS=(recap forward learn trace feel awaken note dig rrr standup who-are-you watch focus reflect status sync)
     ;;
   full)
-    SKILLS=(recap forward learn trace feel awaken dig rrr standup who-are-you watch deep-research birth philosophy speak)
+    SKILLS=(recap forward learn trace feel awaken note dig rrr standup who-are-you watch focus reflect status sync deep-research birth philosophy speak about promote export timeline connect review broadcast plan mission goodbye)
     ;;
   *)
     echo "  Unknown profile: $PROFILE (use: seed, standard, full)"

@@ -1,5 +1,6 @@
 import { prisma } from "../db/index.js";
 import { AGENTS, getAgent } from "../agents.js";
+import { isTelegramEnabled, notifyWorkflowCreated, notifyTaskCompleted, notifyWorkflowCompleted, notifyWorkflowFailed } from "../services/telegram.js";
 
 // --- kuraith_workflow ---
 
@@ -66,6 +67,10 @@ async function createWorkflow(args: any, userId: string) {
   });
 
   const taskList = taskResults.map((t: any, i: number) => `  ${i + 1}. [${t.status}] ${t.title} → ${t.agentDisplay}${t.branch ? ` (${t.branch})` : ""}`).join("\n");
+
+  if (isTelegramEnabled()) {
+    notifyWorkflowCreated(args.name, taskResults.length).catch(() => {});
+  }
 
   return {
     content: [{
@@ -207,11 +212,21 @@ async function updateTask(args: any, userId: string) {
       where: { id: task.workflowId },
       data: { status: "completed", completedAt: new Date() },
     });
+    if (isTelegramEnabled()) {
+      notifyWorkflowCompleted(task.workflow.name).catch(() => {});
+    }
   } else if (anyFailed) {
     await (prisma as any).workflow.update({
       where: { id: task.workflowId },
       data: { status: "failed" },
     });
+    if (isTelegramEnabled()) {
+      notifyWorkflowFailed(task.workflow.name, task.title, task.agent || "unknown").catch(() => {});
+    }
+  }
+
+  if (isTelegramEnabled() && args.status === "completed") {
+    notifyTaskCompleted(task.workflow.name, task.title, task.agent || "unknown").catch(() => {});
   }
 
   await prisma.activityLog.create({

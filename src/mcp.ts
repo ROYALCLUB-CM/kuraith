@@ -274,7 +274,7 @@ export async function startMCPServer() {
   </div>
 
   <div class="section">
-    <div class="label">17 Agents — 15 Skills — 12 MCP Tools</div>
+    <div class="label">17 Agents — 30 Skills — 12 MCP Tools</div>
     <div class="tools">
       <span class="tool">search</span>
       <span class="tool">learn</span>

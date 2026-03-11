@@ -1,5 +1,6 @@
 import { prisma } from "../db/index.js";
 import { embedDocument, isEmbeddingEnabled } from "../services/embeddings.js";
+import { isTelegramEnabled, notifyLearn } from "../services/telegram.js";
 
 export const learnTool = {
   name: "kuraith_learn",
@@ -65,6 +66,11 @@ export async function handleLearn(args: {
   // Auto-embed if OpenAI API key is configured
   if (isEmbeddingEnabled()) {
     embedDocument(doc.id, `${args.title}\n\n${args.content}`).catch(() => {});
+  }
+
+  // Telegram notification
+  if (isTelegramEnabled()) {
+    notifyLearn(args.title, args.type || "knowledge", stage).catch(() => {});
   }
 
   return {
