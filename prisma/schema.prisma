@@ -1,0 +1,220 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pgvector(map: "vector")]
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  apiKeys     ApiKey[]
+  documents   Document[]
+  sessions    Session[]
+  handoffs    Handoff[]
+  learnings   Learning[]
+  traces      Trace[]
+  activities  ActivityLog[]
+  searchLogs  SearchLog[]
+  settings    Setting[]
+  workflows   Workflow[]
+
+  @@map("users")
+}
+
+model ApiKey {
+  id        String    @id @default(cuid())
+  userId    String    @map("user_id")
+  key       String    @unique
+  name      String
+  createdAt DateTime  @default(now()) @map("created_at")
+  lastUsed  DateTime? @map("last_used")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("api_keys")
+}
+
+model Document {
+  id           String    @id @default(cuid())
+  userId       String    @map("user_id")
+  title        String
+  content      String
+  type         String    @default("note") // note, session, learning, trace
+  concepts     String[]  @default([])
+  project      String?
+  supersededBy String?   @map("superseded_by")
+  stage        String    @default("raw") // raw, refined, gem
+  refinedAt    DateTime? @map("refined_at")
+  refinedNotes String?   @map("refined_notes")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vectors     DocumentVector[]
+  sourceLinks TraceLink[]       @relation("source")
+  targetLinks TraceLink[]       @relation("target")
+
+  @@map("documents")
+}
+
+model DocumentVector {
+  id         String                      @id @default(cuid())
+  documentId String                      @unique @map("document_id")
+  embedding  Unsupported("vector(1536)")
+  createdAt  DateTime                    @default(now()) @map("created_at")
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@map("document_vectors")
+}
+
+model Session {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  agent       String    @default("unknown")
+  summary     String?
+  project     String?
+  discoveries String[]  @default([])
+  startedAt   DateTime  @default(now()) @map("started_at")
+  endedAt     DateTime? @map("ended_at")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  handoffs Handoff[]
+
+  @@map("sessions")
+}
+
+model Handoff {
+  id            String    @id @default(cuid())
+  userId        String    @map("user_id")
+  fromSessionId String?   @map("from_session_id")
+  context       String
+  nextSteps     String[]  @default([]) @map("next_steps")
+  warnings      String[]  @default([])
+  createdAt     DateTime  @default(now()) @map("created_at")
+  readAt        DateTime? @map("read_at")
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fromSession Session? @relation(fields: [fromSessionId], references: [id])
+
+  @@map("handoffs")
+}
+
+model Learning {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  title     String
+  content   String
+  concepts  String[] @default([])
+  project   String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("learnings")
+}
+
+model Trace {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  query     String
+  results   String
+  project   String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("traces")
+}
+
+model TraceLink {
+  id        String   @id @default(cuid())
+  sourceId  String   @map("source_id")
+  targetId  String   @map("target_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  source Document @relation("source", fields: [sourceId], references: [id], onDelete: Cascade)
+  target Document @relation("target", fields: [targetId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceId, targetId])
+  @@map("trace_links")
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  action    String
+  details   String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("activity_log")
+}
+
+model SearchLog {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  query        String
+  resultsCount Int      @default(0) @map("results_count")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("search_log")
+}
+
+model Setting {
+  id     String @id @default(cuid())
+  userId String @map("user_id")
+  key    String
+  value  String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, key])
+  @@map("settings")
+}
+
+model Workflow {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  name        String
+  description String    @default("")
+  status      String    @default("pending") // pending, in_progress, completed, failed
+  createdAt   DateTime  @default(now()) @map("created_at")
+  completedAt DateTime? @map("completed_at")
+
+  user  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks WorkflowTask[]
+
+  @@map("workflows")
+}
+
+model WorkflowTask {
+  id           String    @id @default(cuid())
+  workflowId   String    @map("workflow_id")
+  title        String
+  description  String    @default("")
+  agent        String    @default("unknown")
+  agentDisplay String    @default("Unknown") @map("agent_display")
+  branch       String?
+  status       String    @default("pending") // pending, in_progress, completed, failed
+  notes        String?
+  claimedAt    DateTime? @map("claimed_at")
+  completedAt  DateTime? @map("completed_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@map("workflow_tasks")
+}

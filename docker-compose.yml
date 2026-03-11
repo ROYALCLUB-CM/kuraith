@@ -1,0 +1,32 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: kuraith-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kuraith
+      POSTGRES_PASSWORD: kuraith_dev
+      POSTGRES_DB: kuraith
+    ports:
+      - "5432:5432"
+    volumes:
+      - kuraith-data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    container_name: kuraith-api
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      PORT: "47700"
+      HOST: "0.0.0.0"
+      MCP_PORT: "47701"
+      DATABASE_URL: "postgresql://kuraith:kuraith_dev@db:5432/kuraith?schema=public"
+      JWT_SECRET: "kuraith-dev-secret-change-in-production"
+    ports:
+      - "47700:47700"
+      - "47701:47701"
+
+volumes:
+  kuraith-data:
