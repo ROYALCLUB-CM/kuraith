@@ -8,11 +8,13 @@ import {
   Clock,
   Search,
   Radio,
+  Building2,
   LogOut,
 } from "lucide-react";
 
 const nav = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
+  { to: "/office", icon: Building2, label: "Office" },
   { to: "/mission-control", icon: Radio, label: "Mission Control" },
   { to: "/documents", icon: FileText, label: "Documents" },
   { to: "/pipeline", icon: GitBranch, label: "Pipeline" },
