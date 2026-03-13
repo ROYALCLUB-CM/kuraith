@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { api } from "../lib/api";
+import { api, onEvent } from "../lib/api";
 import {
   Building2,
   Monitor,
@@ -447,8 +447,9 @@ export default function OfficePage() {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 30000); // refresh every 30s
-    return () => clearInterval(interval);
+    const interval = setInterval(fetchData, 30000);
+    const unsub = onEvent("*", fetchData); // real-time refresh on any event
+    return () => { clearInterval(interval); unsub(); };
   }, [fetchData]);
 
   useEffect(() => {

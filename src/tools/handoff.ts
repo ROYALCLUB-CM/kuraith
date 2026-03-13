@@ -1,5 +1,6 @@
 import { prisma } from "../db/index.js";
 import { isTelegramEnabled, notifyHandoff } from "../services/telegram.js";
+import { emitEvent } from "../events.js";
 
 export const handoffTool = {
   name: "kuraith_handoff",
@@ -75,6 +76,8 @@ export async function handleHandoff(args: {
   if (isTelegramEnabled()) {
     notifyHandoff(agentName, args.nextSteps, args.warnings || []).catch(() => {});
   }
+
+  emitEvent("handoff", { id: handoff.id, agent: agentName, nextSteps: args.nextSteps.length });
 
   return {
     content: [

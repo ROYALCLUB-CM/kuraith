@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { api } from "../lib/api";
+import { useEffect, useState, useCallback } from "react";
+import { api, onEvent } from "../lib/api";
 import {
   FileText,
   Clock,
@@ -80,10 +80,15 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<any>(null);
   const [activity, setActivity] = useState<any[]>([]);
 
-  useEffect(() => {
+  const refresh = useCallback(() => {
     api.dashboardStats().then(setStats);
     api.dashboardActivity(7).then((r) => setActivity(r.activity || []));
   }, []);
+
+  useEffect(() => {
+    refresh();
+    return onEvent("*", refresh);
+  }, [refresh]);
 
   if (!stats) {
     return (

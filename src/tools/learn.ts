@@ -1,6 +1,7 @@
 import { prisma } from "../db/index.js";
 import { embedDocument, isEmbeddingEnabled } from "../services/embeddings.js";
 import { isTelegramEnabled, notifyLearn } from "../services/telegram.js";
+import { emitEvent } from "../events.js";
 
 export const learnTool = {
   name: "kuraith_learn",
@@ -72,6 +73,9 @@ export async function handleLearn(args: {
   if (isTelegramEnabled()) {
     notifyLearn(args.title, args.type || "knowledge", stage).catch(() => {});
   }
+
+  // Real-time event
+  emitEvent("learn", { id: doc.id, title: args.title, type: args.type || "knowledge", stage });
 
   return {
     content: [

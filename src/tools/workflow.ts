@@ -1,6 +1,7 @@
 import { prisma } from "../db/index.js";
 import { AGENTS, getAgent } from "../agents.js";
 import { isTelegramEnabled, notifyWorkflowCreated, notifyTaskCompleted, notifyWorkflowCompleted, notifyWorkflowFailed } from "../services/telegram.js";
+import { emitEvent } from "../events.js";
 
 // --- kuraith_workflow ---
 
@@ -71,6 +72,7 @@ async function createWorkflow(args: any, userId: string) {
   if (isTelegramEnabled()) {
     notifyWorkflowCreated(args.name, taskResults.length).catch(() => {});
   }
+  emitEvent("workflow", { action: "created", name: args.name, tasks: taskResults.length });
 
   return {
     content: [{

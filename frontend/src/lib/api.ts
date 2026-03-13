@@ -85,3 +85,44 @@ export const api = {
   // Mission Control
   missionControl: () => request<any>("/mission-control"),
 };
+
+// ─── SSE Real-time Events ───
+
+type EventCallback = (data: any) => void;
+const listeners: Record<string, Set<EventCallback>> = {};
+let eventSource: EventSource | null = null;
+
+export function connectSSE() {
+  if (eventSource) return;
+  eventSource = new EventSource(`${BASE}/events`);
+
+  const eventTypes = ["learn", "handoff", "workflow", "search", "refine", "heartbeat"];
+  for (const type of eventTypes) {
+    eventSource.addEventListener(type, (e: MessageEvent) => {
+      const data = JSON.parse(e.data);
+      const cbs = listeners[type];
+      if (cbs) cbs.forEach((cb) => cb(data));
+      // Also notify "any" listeners
+      const anyCbs = listeners["*"];
+      if (anyCbs) anyCbs.forEach((cb) => cb({ event: type, ...data }));
+    });
+  }
+
+  eventSource.onerror = () => {
+    eventSource?.close();
+    eventSource = null;
+    // Reconnect after 5s
+    setTimeout(connectSSE, 5000);
+  };
+}
+
+export function onEvent(event: string, cb: EventCallback): () => void {
+  if (!listeners[event]) listeners[event] = new Set();
+  listeners[event].add(cb);
+  return () => listeners[event]?.delete(cb);
+}
+
+export function disconnectSSE() {
+  eventSource?.close();
+  eventSource = null;
+}

@@ -1,5 +1,6 @@
+import { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { clearToken } from "../lib/api";
+import { clearToken, connectSSE, onEvent } from "../lib/api";
 import {
   LayoutDashboard,
   FileText,
@@ -25,6 +26,16 @@ const nav = [
 
 export default function Layout() {
   const navigate = useNavigate();
+  const [liveIndicator, setLiveIndicator] = useState(false);
+
+  useEffect(() => {
+    connectSSE();
+    const unsub = onEvent("*", () => {
+      setLiveIndicator(true);
+      setTimeout(() => setLiveIndicator(false), 2000);
+    });
+    return unsub;
+  }, []);
 
   function logout() {
     clearToken();
@@ -37,9 +48,12 @@ export default function Layout() {
       <aside className="w-56 bg-gray-900 border-r border-gray-800 flex flex-col">
         {/* Logo */}
         <div className="p-5 border-b border-gray-800">
-          <h1 className="text-lg font-bold tracking-widest text-cyan-400">
-            KURAITH
-          </h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-lg font-bold tracking-widest text-cyan-400">
+              KURAITH
+            </h1>
+            <span className={`w-2 h-2 rounded-full transition-colors ${liveIndicator ? "bg-cyan-400 animate-pulse" : "bg-green-500"}`} />
+          </div>
           <p className="text-[10px] text-gray-500 tracking-wider mt-0.5">
             เงาที่ไม่เคยลืม
           </p>

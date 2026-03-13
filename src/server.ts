@@ -14,6 +14,7 @@ import { dashboardRoutes } from "./api/dashboard.js";
 import { workflowRoutes } from "./api/workflows.js";
 import { missionControlRoutes } from "./api/mission-control.js";
 import { authMiddleware } from "./api/middleware.js";
+import { sseRoutes } from "./events.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -41,6 +42,9 @@ export async function createServer() {
   await app.register(dashboardRoutes, { prefix: "/api/dashboard" });
   await app.register(workflowRoutes, { prefix: "/api/workflows" });
   await app.register(missionControlRoutes, { prefix: "/api/mission-control" });
+
+  // SSE — real-time events (no auth required)
+  await app.register(sseRoutes, { prefix: "/api" });
 
   // Health check
   app.get("/health", async () => ({
